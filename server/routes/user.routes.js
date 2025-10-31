@@ -1,23 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/user.controller');
+const userController = require('../controllers/user.controller.js');
+const authCtrl = require('../controllers/auth.controller.js');
+const { requireSignin } = require('../controllers/auth.controller');
 
-// GET all users
-router.get('/', userController.getAll);
-
-// GET user by ID
-router.get('/:id', userController.getById);
-
-// POST (create) new user
+// ✅ Create a new user (SIGN UP)
 router.post('/', userController.create);
 
-// PUT (update) user by ID
-router.put('/:id', userController.update);
+// ✅ Protected test route
+router.get('/secret', requireSignin, (req, res) => {
+  res.json({ message: "Access granted ✅ Protected route working!" });
+});
 
-// DELETE user by ID
-router.delete('/:id', userController.deleteOne);
+// ✅ Get all users
+router.get('/', userController.getAll);
 
-// DELETE all users
-router.delete('/', userController.deleteAll);
+// ✅ Get user by ID
+router.get('/:id', userController.getById);
+
+// ✅ Update user
+router.put('/:id', authCtrl.requireSignin, authCtrl.hasAuthorization, userController.update);
+
+// ✅ Delete user
+router.delete('/:id', authCtrl.requireSignin, authCtrl.hasAuthorization, userController.deleteOne);
 
 module.exports = router;

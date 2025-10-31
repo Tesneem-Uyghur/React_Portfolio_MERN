@@ -1,31 +1,47 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();   // loads variables from .env
+const dotenv = require('dotenv');
+const authRoutes = require('./server/routes/auth.routes');
+const userRoutes = require('./server/routes/user.routes');
+const contactRoutes = require('./server/routes/contact.routes');
+const educationRoutes = require('./server/routes/education.routes');
+const projectRoutes = require('./server/routes/project.routes');
+
+dotenv.config();
 
 const app = express();
-app.use(express.json());      //middleware to parse JSON
+app.use(express.json());
 
-//import routes
-const contactRoutes = require('./server/routes/contact.routes');
-
-//Connect to MongoDB Atlas
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URL)
-.then(() =>
-     console.log('MongoDB connected successfully'))
-.catch(error =>
-    console.error('MongoDB connection error:', error));
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
-    //Use Routes
+// ✅ Use routes
+app.use('/api/users', userRoutes);       // <-- make sure it's this line
+app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
+app.use('/api/education', educationRoutes);
+app.use('/api/project', projectRoutes);
 
-//Test Route
-app.get("/",(req, res)=>{
-res.send("Welcome to to My Portfolio application")
+// ✅ Test route
+app.get('/', (req, res) => {
+  res.send('Welcome to My Portfolio application');
 });
 
+// ✅ Error handler
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ error: err.name + ': ' + err.message });
+  } else if (err) {
+    res.status(400).json({ error: err.name + ': ' + err.message });
+    console.log(err);
+  }
+});
 
-//Test Server
-app.listen(3000);
-console.log("Server running at http://localhost:3000/");
+// ✅ Start server
+app.listen(3000, () => {
+  console.log('🚀 Server running at http://localhost:3000/');
+});
 
-module.exports = app; 
+module.exports = app;
