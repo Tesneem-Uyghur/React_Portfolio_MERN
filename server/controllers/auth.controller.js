@@ -2,9 +2,10 @@ const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const { expressjwt } = require('express-jwt');
 
-require('dotenv').config(); // load .env variables
+// Load environment variables from .env file
+require('dotenv').config();
 
-// SIGN IN
+// Sign in user and return JWT token
 const signin = async (req, res) => {
   try {
     // Find user by email
@@ -12,15 +13,15 @@ const signin = async (req, res) => {
     if (!user)
       return res.status(401).json({ error: "User not found" });
 
-    // Check password validity
+    // Check if password matches
     if (!user.authenticate(req.body.password))
       return res.status(401).json({ error: "Email and password don't match." });
 
-    // Generate JWT token using secret from .env
+    // Generate JWT token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
-    // Set token in cookie
-    res.cookie('t', token, { expire: new Date() + 2222 });
+    // Set cookie and return token with user info
+    res.cookie('t', token, { expires: new Date(Date.now() + 2222222) });
     return res.json({
       token,
       user: { _id: user._id, name: user.name, email: user.email }
@@ -31,20 +32,20 @@ const signin = async (req, res) => {
   }
 };
 
-// SIGN OUT
+// Clear cookie to sign out user
 const signout = (req, res) => {
   res.clearCookie('t');
   return res.status(200).json({ message: "Signed out successfully" });
 };
 
-// PROTECT ROUTES
+// Middleware to verify JWT token
 const requireSignin = expressjwt({
-  secret: process.env.JWT_SECRET, //  use secret from .env
+  secret: process.env.JWT_SECRET,
   algorithms: ['HS256'],
   userProperty: 'auth'
 });
 
-// AUTHORIZE USER
+// Middleware to check if user is authorized to access resource
 const hasAuthorization = (req, res, next) => {
   const authorized =
     req.profile && req.auth && req.profile._id == req.auth._id;

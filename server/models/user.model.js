@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 
+// User schema with password encryption
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -18,7 +19,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: 'Password is required'
   },
-  salt: String,
+  salt: String,  // Random string used for password hashing
   created: {
     type: Date,
     default: Date.now
@@ -29,6 +30,8 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+// Virtual field for password - not stored in database
+// When password is set, it generates salt and hashes the password
 UserSchema.virtual('password')
   .set(function(password) {
     this._password = password;
@@ -39,10 +42,14 @@ UserSchema.virtual('password')
     return this._password;
   });
 
+// User methods
 UserSchema.methods = {
+  // Compare plain text password with hashed password
   authenticate: function(plainText) {
     return this.encryptPassword(plainText) === this.hashed_password;
   },
+  
+  // Encrypt password using HMAC-SHA1 algorithm with salt
   encryptPassword: function(password) {
     if (!password) return '';
     try {
@@ -51,9 +58,12 @@ UserSchema.methods = {
       return '';
     }
   },
+  
+  // Generate random salt for password hashing
   makeSalt: function() {
     return Math.round(new Date().valueOf() * Math.random()) + '';
   }
 };
 
+// Export User model
 module.exports = mongoose.model('User', UserSchema);

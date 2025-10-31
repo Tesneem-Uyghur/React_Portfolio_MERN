@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//Education schema for storing education information
 const EducationSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -27,4 +28,5 @@ const EducationSchema = new mongoose.Schema({
   }
 });
 
+// Export Education model
 module.exports = mongoose.model('Education', EducationSchema);

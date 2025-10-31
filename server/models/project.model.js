@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//Project schema for storing project information
 const ProjectSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -26,5 +27,5 @@ const ProjectSchema = new mongoose.Schema({
     required: true
   }
 });
-
+// Export project model
 module.exports = mongoose.model('Project', ProjectSchema);
