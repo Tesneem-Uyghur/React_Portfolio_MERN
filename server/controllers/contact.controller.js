@@ -2,11 +2,13 @@ const Contact = require('../models/contact.model');
 
 // Create new contact
 exports.create = async (req, res) => {
+  console.log("📩 Received new contact data:", req.body);
   try {
     const contact = new Contact(req.body);
     await contact.save();
-    res.status(201).json(contact);
+    res.status(200).json({ message: "Contact saved successfully" });
   } catch (error) {
+    console.error("❌ Error saving contact:", error);
     res.status(400).json({ error: error.message });
   }
 };

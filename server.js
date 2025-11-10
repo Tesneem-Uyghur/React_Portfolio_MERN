@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const authRoutes = require('./server/routes/auth.routes');
 const userRoutes = require('./server/routes/user.routes');
 const contactRoutes = require('./server/routes/contact.routes');
@@ -11,6 +12,7 @@ const projectRoutes = require('./server/routes/project.routes');
 dotenv.config();
 
 const app = express();
+app.use(cors());
 
 // Middleware to parse JSON request bodies
 app.use(express.json());

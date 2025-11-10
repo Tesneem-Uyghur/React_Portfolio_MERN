@@ -2,15 +2,27 @@ const mongoose = require('mongoose');
 
 // Contact schema for storing contact information
 const ContactSchema = new mongoose.Schema({
-  firstname: {
+  firstName: {
     type: String,
     required: true
   },
-  lastname: {
+  lastName: {
     type: String,
     required: true
   },
   email: {
+    type: String,
+    required: true
+  },
+   phone: {
+    type: String,
+    required: false  // Optional field
+  },
+  subject: {
+    type: String,
+    required: true
+  },
+  message: {
     type: String,
     required: true
   }
