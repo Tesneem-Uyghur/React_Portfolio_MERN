@@ -8,6 +8,11 @@ const UserSchema = new mongoose.Schema({
     required: 'Name is required',
     trim: true
   },
+  role: {
+  type: String,
+  default: "User", // Users created from signup page are normal users
+  enum: ["Admin", "User"]
+},
   email: {
     type: String,
     trim: true,
