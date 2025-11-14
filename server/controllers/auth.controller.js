@@ -33,7 +33,7 @@ const signin = async (req, res) => {
     res.cookie('t', token, { expires: new Date(Date.now() + 2222222) });
     return res.json({
       token,
-      user: { _id: user._id, name: user.name, email: user.email }
+      user: { _id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
     console.error(err);
